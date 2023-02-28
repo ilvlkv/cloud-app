@@ -20,6 +20,51 @@
   }
 }
 
+.password-input__box {
+  width: 90%;
+
+  border-bottom: 2px solid white;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+
+  .text-input_minimalistic {
+    border: none;
+  }
+
+  button {
+    width: 20px;
+    height: 20px;
+
+    border: none;
+    background: none;
+
+    background: url('src/assets/show.svg');
+    background-size: cover;
+
+    transition: 100ms;
+
+    &:hover {
+      cursor: pointer;
+      scale: 1.1;
+    }
+  }
+}
+
+// .text-input_password {
+//   width: 85%;
+
+//   &::after {
+//     width: 5%;
+//     height: 100%;
+
+//     content: '';
+
+//     display: block;
+//   }
+// }
+
 .text-input_error {
   color: red;
   border-bottom: 2px solid red;

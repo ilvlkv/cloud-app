@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import Cookies from 'js-cookie';
 import MinimalisticSubmitButton from '../MinimalisticSubmitButton/MinimalisticSubmitButton';
 import MinimalisticTextInput from '../MinimalisticTextInput/MinimalisticTextInput';
-import TextError from '../TextError/TextError';
+import TextNotification from '../TextNotification/TextNotification';
 import './MinimalisticAuthorizationForm.scss';
 
 function MinimalisticAuthorizationForm(props) {
   const [loginInputClasses, changeLoginInputClasses] = useState('');
   const [passwordInputClasses, changePasswordInputClasses] = useState('');
-  const [inputErrors, showInputError] = useState(null);
+  const [inputNotifications, showInputNotification] = useState(null);
+  const [submitButtonName, setSubmitButtonName] = useState('Авторизоваться');
 
   const handleLoginChange = (event) => {
     props.onLoginChange(event.target.value);
@@ -23,7 +24,7 @@ function MinimalisticAuthorizationForm(props) {
 
     !props.login || !props.password
       ? submit_handlers.error.init(props)
-      : submit_handlers.success(props);
+      : submit_handlers.success.login(props);
   };
 
   const submit_handlers = {
@@ -38,7 +39,7 @@ function MinimalisticAuthorizationForm(props) {
       clear_errors: function clearErrors() {
         changeLoginInputClasses('');
         changePasswordInputClasses('');
-        showInputError(null);
+        showInputNotification(null);
       },
       login_err: async function showLoginError() {
         if (loginInputClasses) {
@@ -50,7 +51,9 @@ function MinimalisticAuthorizationForm(props) {
           submit_handlers.error.clear_errors();
 
           changeLoginInputClasses('text-input_error');
-          showInputError(<TextError text="Вы не ввели логин" />);
+          showInputNotification(
+            <TextNotification type="error" text="Вы не ввели логин" />
+          );
         }
       },
       password_err: async function showPasswordError() {
@@ -63,35 +66,66 @@ function MinimalisticAuthorizationForm(props) {
           submit_handlers.error.clear_errors();
 
           changePasswordInputClasses('text-input_error');
-          showInputError(<TextError text="Вы не ввели пароль" />);
+          showInputNotification(
+            <TextNotification type="error" text="Вы не ввели пароль" />
+          );
         }
       },
+      fetch_err: async function showFetchError(text) {
+        submit_handlers.error.clear_errors();
+
+        showInputNotification(
+          <TextNotification type="error" text={`${text}`} />
+        );
+      },
     },
-    success: async function getAuthorization(props) {
-      submit_handlers.error.clear_errors();
+    success: {
+      login: async function getAuthorization(props) {
+        submit_handlers.error.clear_errors();
 
-      const request = await fetch(`http://localhost:3000/auth/login`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json;charset=utf-8',
-          'Access-Control-Allow-Origin': '*',
-        },
-        body: JSON.stringify({
-          username: props.login,
-          password: props.password,
-        }),
-      });
+        const this_username = props.login;
+        const this_password = props.password;
 
-      const responce = await request.json();
+        try {
+          const request = await fetch(`http://localhost:3000/auth/login`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json;charset=utf-8',
+              'Access-Control-Allow-Origin': '*',
+            },
+            body: JSON.stringify({
+              username: this_username,
+              password: this_password,
+            }),
+          });
 
-      console.log(responce);
+          const responce = await request.json();
 
-      if (responce.user.token) {
-        console.log(responce.message);
-        Cookies.set('token', responce.user.token, { expires: 1 });
-      } else {
-        console.log(`Ошибка авторизации: ${responce.message}`);
-      }
+          if (responce.status === 200) {
+            submit_handlers.error.clear_errors();
+
+            showInputNotification(
+              <TextNotification type="success" text={`${responce.message}`} />
+            );
+
+            Cookies.set('token', responce.user.token, { expires: 1 });
+          } else {
+            submit_handlers.error.fetch_err(responce.message);
+          }
+        } catch (error) {
+          submit_handlers.error.clear_errors();
+
+          let error_text = error;
+
+          if (error_text == 'TypeError: Failed to fetch') {
+            error_text = 'Ошибка сети: запрос не отправлен';
+          } else {
+            error_text = 'Неизвестная ошибка';
+          }
+
+          submit_handlers.error.fetch_err(error_text);
+        }
+      },
     },
   };
 
@@ -115,8 +149,8 @@ function MinimalisticAuthorizationForm(props) {
         onChange={handlePasswordChange}
         className={passwordInputClasses}
       />
-      {inputErrors}
-      <MinimalisticSubmitButton value="Авторизоваться" />
+      {inputNotifications}
+      <MinimalisticSubmitButton value={submitButtonName} />
     </form>
   );
 }

@@ -1,0 +1,39 @@
+.text-notification {
+  width: 90%;
+  min-height: 25px;
+
+  border-radius: 10px;
+  text-align: center;
+
+  font-size: 15px;
+
+  margin: 0;
+
+  margin-top: 15px;
+  animation: fade-in-top 500ms cubic-bezier(0.39, 0.575, 0.565, 1) both;
+
+  padding: 3px 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.text-error {
+  color: red;
+  background-color: white;
+}
+
+.text-success {
+  color: greenyellow;
+  background-color: black;
+}
+
+@keyframes fade-in-top {
+  0% {
+    opacity: 0;
+    scale: 0.5;
+  }
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
