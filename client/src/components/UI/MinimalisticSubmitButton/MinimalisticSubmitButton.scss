@@ -1,0 +1,20 @@
+.submit-button_minimalistic {
+  width: 50%;
+  height: 30px;
+
+  margin-top: 15px;
+  border: 2px solid white;
+  border-radius: 5px;
+
+  color: white;
+  font-family: inherit;
+  font-size: 15px;
+
+  transition: 200ms;
+
+  &:hover {
+    cursor: pointer;
+    background-color: black;
+    margin-top: 20px;
+  }
+}

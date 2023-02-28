@@ -1,0 +1,19 @@
+.text-input_minimalistic {
+  font-family: inherit;
+
+  width: 90%;
+  height: 25px;
+
+  border-bottom: 2px solid white;
+
+  color: white;
+  font-size: 18px;
+
+  margin-top: 25px;
+
+  &::placeholder {
+    color: inherit;
+    font-family: inherit;
+    font-size: 18px;
+  }
+}

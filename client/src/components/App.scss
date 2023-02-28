@@ -1,0 +1,18 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&display=swap');
+
+.App {
+  background: url('../assets/background.svg');
+  background-size: cover;
+
+  width: 100%;
+  min-height: 100vh;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  font-family: 'Manrope', sans-serif;
+
+  position: relative;
+}

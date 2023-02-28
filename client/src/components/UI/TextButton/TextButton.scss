@@ -1,0 +1,19 @@
+.text-button {
+  border: none;
+  background: none;
+
+  margin-bottom: 10px;
+  height: 25px;
+
+  font-family: inherit;
+  font-size: 14px;
+  color: white;
+
+  transition: 200ms;
+  &:hover {
+    cursor: pointer;
+    margin-bottom: 15px;
+
+    scale: 1.1;
+  }
+}
