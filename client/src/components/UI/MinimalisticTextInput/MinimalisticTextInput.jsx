@@ -2,8 +2,8 @@ import React from 'react';
 import './MinimalisticTextInput.scss';
 
 function MinimalisticTextInput(props) {
-  const handleChanges = () => {
-    props.onChange(event);
+  const handleChanges = (event) => {
+    return props.onChange(event.target.value);
   };
 
   return (

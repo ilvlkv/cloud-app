@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 import MinimalisticSubmitButton from '../MinimalisticSubmitButton/MinimalisticSubmitButton';
 import MinimalisticTextInput from '../MinimalisticTextInput/MinimalisticTextInput';
@@ -6,75 +6,78 @@ import TextNotification from '../TextNotification/TextNotification';
 import './MinimalisticAuthorizationForm.scss';
 
 function MinimalisticAuthorizationForm(props) {
-  const [loginInputClasses, changeLoginInputClasses] = useState('');
-  const [passwordInputClasses, changePasswordInputClasses] = useState('');
-  const [inputNotifications, showInputNotification] = useState(null);
-  const [submitButtonName, setSubmitButtonName] = useState('Авторизоваться');
-
-  const handleLoginChange = (event) => {
-    props.onLoginChange(event.target.value);
-  };
-
-  const handlePasswordChange = (event) => {
-    props.onPasswordChange(event.target.value);
-  };
-
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
-    !props.login || !props.password
-      ? submit_handlers.error.init(props)
-      : submit_handlers.success.login(props);
+    if (props.isRegistrationForm === false) {
+      !props.login || !props.password
+        ? submit_handlers.error.init(props)
+        : submit_handlers.success.login(props);
+    } else {
+      !props.username || !props.login || !props.password || !props.passwordCheck
+        ? submit_handlers.error.init(props)
+        : submit_handlers.success.register(props);
+    }
   };
 
   const submit_handlers = {
     error: {
-      init: async function initError(props) {
-        if (!props.login) {
-          submit_handlers.error.login_err();
-        } else {
-          submit_handlers.error.password_err();
-        }
+      init: (props) => {
+        !props.username && props.isRegistrationForm === true
+          ? submit_handlers.error.input_err(
+              props.usernameInputClasses,
+              props.changeUsernameInputClasses,
+              'Пожалуйста представьтесь - это важно :)'
+            )
+          : !props.login
+          ? submit_handlers.error.input_err(
+              props.loginInputClasses,
+              props.changeLoginInputClasses,
+              'Вы не ввели логин'
+            )
+          : !props.password
+          ? submit_handlers.error.input_err(
+              props.passwordInputClasses,
+              props.changePasswordInputClasses,
+              'Вы не ввели пароль'
+            )
+          : !props.passwordCheck && props.isRegistrationForm === true
+          ? submit_handlers.error.input_err(
+              props.passwordCheckInputClasses,
+              props.changePasswordCheckInputClasses,
+              'Подтвердите Ваш пароль - это обязательно'
+            )
+          : false;
       },
       clear_errors: function clearErrors() {
-        changeLoginInputClasses('');
-        changePasswordInputClasses('');
-        showInputNotification(null);
-      },
-      login_err: async function showLoginError() {
-        if (loginInputClasses) {
-          changeLoginInputClasses('');
-          setTimeout(() => {
-            changeLoginInputClasses('text-input_error');
-          }, 0);
-        } else {
-          submit_handlers.error.clear_errors();
+        props.changeLoginInputClasses('');
+        props.changePasswordInputClasses('');
 
-          changeLoginInputClasses('text-input_error');
-          showInputNotification(
-            <TextNotification type="error" text="Вы не ввели логин" />
-          );
+        if (props.isRegistrationForm === true) {
+          props.changeUsernameInputClasses('');
+          props.changePasswordCheckInputClasses('');
         }
+
+        props.showInputNotification(null);
       },
-      password_err: async function showPasswordError() {
-        if (passwordInputClasses) {
-          changePasswordInputClasses('');
+      input_err: (input_state, state_handler, error_text) => {
+        if (input_state) {
+          state_handler('');
           setTimeout(() => {
-            changePasswordInputClasses('text-input_error');
+            state_handler('text-input_error');
           }, 0);
         } else {
           submit_handlers.error.clear_errors();
-
-          changePasswordInputClasses('text-input_error');
-          showInputNotification(
-            <TextNotification type="error" text="Вы не ввели пароль" />
+          state_handler('text-input_error');
+          props.showInputNotification(
+            <TextNotification type="error" text={`${error_text}`} />
           );
         }
       },
       fetch_err: async function showFetchError(text) {
         submit_handlers.error.clear_errors();
 
-        showInputNotification(
+        props.showInputNotification(
           <TextNotification type="error" text={`${text}`} />
         );
       },
@@ -104,7 +107,7 @@ function MinimalisticAuthorizationForm(props) {
           if (responce.status === 200) {
             submit_handlers.error.clear_errors();
 
-            showInputNotification(
+            props.showInputNotification(
               <TextNotification type="success" text={`${responce.message}`} />
             );
 
@@ -126,6 +129,18 @@ function MinimalisticAuthorizationForm(props) {
           submit_handlers.error.fetch_err(error_text);
         }
       },
+      register: async function registerNewUser(props) {
+        submit_handlers.error.clear_errors();
+        const password_check = props.password === props.passwordCheck;
+
+        password_check === false
+          ? submit_handlers.error.input_err(
+              props.passwordCheckInputClasses,
+              props.changePasswordCheckInputClasses,
+              'Пароли не совпадают'
+            )
+          : console.log('успешно');
+      },
     },
   };
 
@@ -137,20 +152,37 @@ function MinimalisticAuthorizationForm(props) {
     >
       <MinimalisticTextInput
         type="text"
+        placeholder="Ваше имя"
+        value={props.username}
+        onChange={props.setUsername}
+        className={props.usernameInputClasses}
+      />
+
+      <MinimalisticTextInput
+        type="text"
         placeholder="Логин"
         value={props.login}
-        onChange={handleLoginChange}
-        className={loginInputClasses}
+        onChange={props.setLogin}
+        className={props.loginInputClasses}
       />
+
       <MinimalisticTextInput
         type="password"
         placeholder="Пароль"
         value={props.password}
-        onChange={handlePasswordChange}
-        className={passwordInputClasses}
+        onChange={props.setPassword}
+        className={props.passwordInputClasses}
       />
-      {inputNotifications}
-      <MinimalisticSubmitButton value={submitButtonName} />
+
+      <MinimalisticTextInput
+        type="password"
+        placeholder="Повторите пароль"
+        value={props.passwordCheck}
+        onChange={props.setPasswordCheckValue}
+        className={props.passwordCheckInputClasses}
+      />
+      {props.inputNotifications}
+      <MinimalisticSubmitButton value={props.submitButtonName} />
     </form>
   );
 }

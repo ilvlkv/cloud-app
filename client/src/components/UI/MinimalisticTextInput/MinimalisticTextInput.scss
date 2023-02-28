@@ -13,6 +13,8 @@
 
   transition: 500ms;
 
+  animation: scale-in-hor-right 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+
   &::placeholder {
     color: inherit;
     font-family: inherit;
@@ -52,19 +54,6 @@
   }
 }
 
-// .text-input_password {
-//   width: 85%;
-
-//   &::after {
-//     width: 5%;
-//     height: 100%;
-
-//     content: '';
-
-//     display: block;
-//   }
-// }
-
 .text-input_error {
   color: red;
   border-bottom: 2px solid red;
@@ -92,5 +81,20 @@
   }
   100% {
     transform: scale3d(1, 1, 1);
+  }
+}
+
+@keyframes scale-in-hor-right {
+  0% {
+    transform: scaleX(0);
+
+    transform-origin: 100% 100%;
+    opacity: 0.5;
+  }
+  100% {
+    transform: scaleX(1);
+
+    transform-origin: 100% 100%;
+    opacity: 1;
   }
 }
