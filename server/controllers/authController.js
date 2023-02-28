@@ -66,7 +66,12 @@ class authController {
 
       return res.status(200).json({
         message: `Вы успешно авторизовались как ${username}!`,
-        token,
+        user: {
+          _id: user._id,
+          name: username,
+          token,
+        },
+        timestamp: Date.now(),
       });
     } catch (e) {
       console.log(e);

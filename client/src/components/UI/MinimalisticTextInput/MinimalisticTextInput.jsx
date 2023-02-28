@@ -9,7 +9,7 @@ function MinimalisticTextInput(props) {
   return (
     <input
       type={props.type}
-      className="text-input_minimalistic"
+      className={`text-input_minimalistic ${props.className}`}
       placeholder={props.placeholder}
       value={props.value}
       onChange={handleChanges}
