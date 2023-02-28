@@ -52,9 +52,10 @@ class authController {
       const user = await User.findOne({ username });
 
       if (!user) {
-        return res
-          .status(400)
-          .json({ message: `Пользователь ${username} не найден` });
+        return res.status(400).json({
+          status: 400,
+          message: `Пользователя с таким логином не существует`,
+        });
       }
       const validPassword = bcrypt.compareSync(password, user.password);
 
@@ -65,7 +66,8 @@ class authController {
       const token = generateAccessToken(user._id, user.roles);
 
       return res.status(200).json({
-        message: `Вы успешно авторизовались как ${username}!`,
+        status: 200,
+        message: `Вы успешно авторизовались как ${username}`,
         user: {
           _id: user._id,
           name: username,
