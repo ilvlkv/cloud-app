@@ -60,21 +60,12 @@ class authController {
         return res.status(400).json({ message: 'Введен неверный пароль' });
       }
 
-      const token = generateAccessToken(
-        user._id,
-        user.roles,
-        user.username,
-        user.login
-      );
+      const token = generateAccessToken(user._id, user.roles);
 
       return res.status(200).json({
         status: 200,
         message: `Вы успешно авторизовались как ${login}`,
-        user: {
-          _id: user._id,
-          name: user.username,
-          token,
-        },
+        token,
         timestamp: Date.now(),
       });
     } catch (e) {
@@ -84,10 +75,19 @@ class authController {
   }
   async getUsers(req, res) {
     try {
-      const users = await User.find();
-      res.json(users);
+      const token = req.headers.authorization.split(' ')[1];
+
+      const decodedData = jwt.verify(token, secret);
+      const user_id = decodedData.id;
+
+      const user = await User.findOne({ user_id });
+
+      if (user) {
+        return res.status(200).json(user);
+      }
     } catch (e) {
       console.log(e);
+      res.status(400).json({ message: 'Find error' });
     }
   }
 }
