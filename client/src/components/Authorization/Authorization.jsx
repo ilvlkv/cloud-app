@@ -40,9 +40,15 @@ function Authorization(props) {
   const resetStates = async () => {
     setLogin('');
     setPassword('');
+    setPasswordCheckValue('');
     changeLoginInputClasses('');
     changePasswordInputClasses('');
+    setUsername('');
     showInputNotification(null);
+    changeLoginLabelClasses('hidden');
+    changePasswordLabelClasses('hidden');
+    changeUsernameLabelClasses('hidden');
+    changePasswordCheckLabelClasses('hidden');
   };
 
   const [login, setLogin] = useState('');
@@ -53,6 +59,11 @@ function Authorization(props) {
   const [loginInputClasses, changeLoginInputClasses] = useState('');
   const [passwordInputClasses, changePasswordInputClasses] = useState('');
   const [passwordCheckInputClasses, changePasswordCheckInputClasses] =
+    useState('hidden');
+  const [usernameLabelClasses, changeUsernameLabelClasses] = useState('hidden');
+  const [loginLabelClasses, changeLoginLabelClasses] = useState('hidden');
+  const [passwordLabelClasses, changePasswordLabelClasses] = useState('hidden');
+  const [passwordCheckLabelClasses, changePasswordCheckLabelClasses] =
     useState('hidden');
 
   const [isRegistrationForm, setRegistrationFormState] = useState(false);
@@ -86,6 +97,14 @@ function Authorization(props) {
         changePasswordCheckInputClasses={changePasswordCheckInputClasses}
         inputNotifications={inputNotifications}
         showInputNotification={showInputNotification}
+        usernameLabelClasses={usernameLabelClasses}
+        loginLabelClasses={loginLabelClasses}
+        passwordLabelClasses={passwordLabelClasses}
+        passwordCheckLabelClasses={passwordCheckLabelClasses}
+        changeUsernameLabelClasses={changeUsernameLabelClasses}
+        changeLoginLabelClasses={changeLoginLabelClasses}
+        changePasswordLabelClasses={changePasswordLabelClasses}
+        changePasswordCheckLabelClasses={changePasswordCheckLabelClasses}
       />
       <TextButton text={textButtonName} onClick={getRegistrationForm} />
     </div>

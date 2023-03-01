@@ -35,7 +35,7 @@ class authController {
 
       return res.json({
         status: 200,
-        message: `User ${login} was succesfully registered`,
+        message: `Пользователь ${login} успешно зарегистрирован. Вернитесь на страницу авторизации и войдите в приложение :)`,
         timestamp: Date.now(),
       });
     } catch (e) {

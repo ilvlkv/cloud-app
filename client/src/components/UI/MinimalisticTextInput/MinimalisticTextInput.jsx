@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import './MinimalisticTextInput.scss';
 
 function MinimalisticTextInput(props) {
-  const [label, showLabel] = useState('hidden');
   const [lastWordCheck, setLastWordCheck] = useState('');
 
   const handleChanges = (event) => {
-    if (label === 'hidden') {
-      showLabel('');
+    if (props.labelClasses === 'hidden') {
+      props.changeLabelClasses('');
     }
 
     if (event.target.value === lastWordCheck) {
-      showLabel('hidden');
+      props.changeLabelClasses('hidden');
     }
 
     return props.onChange(event.target.value);
@@ -26,7 +25,7 @@ function MinimalisticTextInput(props) {
         value={props.value}
         onChange={handleChanges}
       />
-      <label htmlFor="" className={`text-input__label ${label}`}>
+      <label htmlFor="" className={`text-input__label ${props.labelClasses}`}>
         {props.placeholder}
       </label>
     </div>

@@ -168,9 +168,6 @@ function MinimalisticAuthorizationForm(props) {
             props.showInputNotification(
               <TextNotification type="success" text={`${responce.message}`} />
             );
-            setTimeout(() => {
-              location.reload();
-            }, 3000);
           } else {
             submit_handlers.error.fetch_err(responce.message);
           }
@@ -203,6 +200,8 @@ function MinimalisticAuthorizationForm(props) {
         value={props.username}
         onChange={props.setUsername}
         className={props.usernameInputClasses}
+        labelClasses={props.usernameLabelClasses}
+        changeLabelClasses={props.changeUsernameLabelClasses}
       />
 
       <MinimalisticTextInput
@@ -211,6 +210,8 @@ function MinimalisticAuthorizationForm(props) {
         value={props.login}
         onChange={props.setLogin}
         className={props.loginInputClasses}
+        labelClasses={props.loginLabelClasses}
+        changeLabelClasses={props.changeLoginLabelClasses}
       />
 
       <MinimalisticTextInput
@@ -219,6 +220,8 @@ function MinimalisticAuthorizationForm(props) {
         value={props.password}
         onChange={props.setPassword}
         className={props.passwordInputClasses}
+        labelClasses={props.passwordLabelClasses}
+        changeLabelClasses={props.changePasswordLabelClasses}
       />
 
       <MinimalisticTextInput
@@ -227,6 +230,8 @@ function MinimalisticAuthorizationForm(props) {
         value={props.passwordCheck}
         onChange={props.setPasswordCheckValue}
         className={props.passwordCheckInputClasses}
+        labelClasses={props.passwordCheckLabelClasses}
+        changeLabelClasses={props.changePasswordCheckLabelClasses}
       />
       {props.inputNotifications}
       <MinimalisticSubmitButton value={props.submitButtonName} />
