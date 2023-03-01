@@ -3,10 +3,7 @@ import './TextButton.scss';
 
 function TextButton(props) {
   return (
-    <button
-      className={`text-button ${props.className}`}
-      onClick={props.onClick}
-    >
+    <button className="text-button" onClick={props.onClick}>
       {props.text}
     </button>
   );

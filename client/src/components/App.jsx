@@ -3,13 +3,15 @@ import Cookies from 'js-cookie';
 
 import Authorization from './Authorization/Authorization';
 import Logo from './UI/Logo/Logo';
+import HelloMessage from './UI/HelloMessage/HelloMessage';
 
 import './App.scss';
 
-const authorization_check = Cookies.get('token');
+const authorization_check = Cookies.get('user_data');
 
 function App(props) {
   const [isAuthorized, setAuthorized] = useState(false);
+  const [helloMessage, showHelloMessage] = useState([<HelloMessage />]);
 
   useEffect(() => {
     if (isAuthorized) return;
@@ -30,7 +32,7 @@ function App(props) {
     return (
       <div className="App">
         <Logo />
-        <h1>Interface</h1>
+        {helloMessage}
       </div>
     );
   }

@@ -22,12 +22,16 @@
 
 .text-error {
   color: red;
+  border: 1px solid red;
   background-color: white;
 }
 
 .text-success {
   color: greenyellow;
+  border: 1px solid greenyellow;
   background-color: black;
+
+  animation: jello-vertical 0.9s both;
 }
 
 @keyframes fade-in-top {
@@ -38,5 +42,29 @@
   100% {
     opacity: 1;
     scale: 1;
+  }
+}
+
+@keyframes jello-vertical {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+  30% {
+    transform: scale3d(0.75, 1.25, 1);
+  }
+  40% {
+    transform: scale3d(1.25, 0.75, 1);
+  }
+  50% {
+    transform: scale3d(0.85, 1.15, 1);
+  }
+  65% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  75% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
   }
 }

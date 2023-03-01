@@ -1,7 +1,6 @@
 const User = require('../models/User');
 const Role = require('../models/Role');
 const bcrypt = require('bcryptjs');
-const { validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const { secret } = require('../config');
 
@@ -17,29 +16,27 @@ const generateAccessToken = (id, roles) => {
 class authController {
   async registration(req, res) {
     try {
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).json({ message: 'Ошибка регистрации' });
-      }
-
-      const { username, password } = req.body;
-      const candidate = await User.findOne({ username });
+      const { login, password, username } = req.body;
+      const candidate = await User.findOne({ login });
       if (candidate) {
         return res
           .status(400)
-          .json({ message: 'Пользователь с таким именем уже существует' });
+          .json({ message: 'Пользователь с таким логином уже существует' });
       }
       const hashPassword = bcrypt.hashSync(password, 7);
       const userRole = await Role.findOne({ value: 'user' });
       const user = new User({
-        username,
+        login,
         password: hashPassword,
+        username,
         roles: [userRole.value],
       });
       await user.save();
 
       return res.json({
-        message: `User ${username} was succesfully registered`,
+        status: 200,
+        message: `User ${login} was succesfully registered`,
+        timestamp: Date.now(),
       });
     } catch (e) {
       console.log(e);
@@ -48,8 +45,8 @@ class authController {
   }
   async login(req, res) {
     try {
-      const { username, password } = req.body;
-      const user = await User.findOne({ username });
+      const { login, password } = req.body;
+      const user = await User.findOne({ login });
 
       if (!user) {
         return res.status(400).json({
@@ -63,14 +60,19 @@ class authController {
         return res.status(400).json({ message: 'Введен неверный пароль' });
       }
 
-      const token = generateAccessToken(user._id, user.roles);
+      const token = generateAccessToken(
+        user._id,
+        user.roles,
+        user.username,
+        user.login
+      );
 
       return res.status(200).json({
         status: 200,
-        message: `Вы успешно авторизовались как ${username}`,
+        message: `Вы успешно авторизовались как ${login}`,
         user: {
           _id: user._id,
-          name: username,
+          name: user.username,
           token,
         },
         timestamp: Date.now(),

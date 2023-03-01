@@ -7,39 +7,60 @@ import TextButton from '../UI/TextButton/TextButton';
 import './Authorization.scss';
 
 function Authorization(props) {
-  const extendToRegistrationForm = () => {
-    setLogin('');
-    setPassword('');
-    changeLoginInputClasses('');
-    changePasswordInputClasses('');
-    showInputNotification(null);
+  const getRegistrationForm = () => {
+    if (isRegistrationForm === false) {
+      extendToRegistrationForm();
+    } else {
+      cutToAuthorizationForm();
+    }
+  };
+  const cutToAuthorizationForm = async () => {
+    await resetStates();
+
+    setTimeout(() => {
+      setRegistrationFormState(false);
+      changeUsernameInputClasses('hidden');
+      changePasswordCheckInputClasses('hidden');
+      setSubmitButtonName('Авторизоваться');
+
+      setTextButtonValue('Зарегистрироваться в приложении');
+    }, 500);
+  };
+  const extendToRegistrationForm = async () => {
+    await resetStates();
 
     setTimeout(() => {
       setRegistrationFormState(true);
       changeUsernameInputClasses('');
       changePasswordCheckInputClasses('');
       setSubmitButtonName('Зарегистрироваться');
-
-      getRegistrationButton('hidden');
+      setTextButtonValue('Вернуться назад');
     }, 500);
   };
-  const checkPassword = () => {};
+  const resetStates = async () => {
+    setLogin('');
+    setPassword('');
+    changeLoginInputClasses('');
+    changePasswordInputClasses('');
+    showInputNotification(null);
+  };
 
   const [login, setLogin] = useState('');
   const [password, setPassword] = useState('');
   const [passwordCheck, setPasswordCheckValue] = useState('');
   const [username, setUsername] = useState('');
-  const [isRegistrationForm, setRegistrationFormState] = useState(false);
-  const [registrationButton, getRegistrationButton] = useState('');
-
   const [usernameInputClasses, changeUsernameInputClasses] = useState('hidden');
   const [loginInputClasses, changeLoginInputClasses] = useState('');
   const [passwordInputClasses, changePasswordInputClasses] = useState('');
   const [passwordCheckInputClasses, changePasswordCheckInputClasses] =
     useState('hidden');
 
+  const [isRegistrationForm, setRegistrationFormState] = useState(false);
   const [inputNotifications, showInputNotification] = useState(null);
 
+  const [textButtonName, setTextButtonValue] = useState(
+    'Зарегистрироваться в приложении'
+  );
   const [submitButtonName, setSubmitButtonName] = useState('Авторизоваться');
 
   return (
@@ -66,11 +87,7 @@ function Authorization(props) {
         inputNotifications={inputNotifications}
         showInputNotification={showInputNotification}
       />
-      <TextButton
-        text="Зарегистрироваться в приложении"
-        onClick={extendToRegistrationForm}
-        className={registrationButton}
-      />
+      <TextButton text={textButtonName} onClick={getRegistrationForm} />
     </div>
   );
 }

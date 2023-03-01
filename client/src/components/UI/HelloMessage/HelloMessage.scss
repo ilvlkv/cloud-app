@@ -1,0 +1,30 @@
+.hello-message__block {
+  width: 1000px;
+  height: 400px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  animation: scale-in-hor-right 1s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+
+  h1 {
+    font-size: 55px;
+  }
+}
+
+@keyframes scale-in-hor-right {
+  0% {
+    transform: scaleX(-50%);
+
+    transform-origin: 100% 100%;
+    opacity: 0;
+  }
+  100% {
+    transform: scaleX(100%);
+
+    transform-origin: 100% 100%;
+    opacity: 1;
+  }
+}
