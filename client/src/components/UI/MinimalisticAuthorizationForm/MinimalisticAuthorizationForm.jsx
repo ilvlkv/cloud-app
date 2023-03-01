@@ -4,14 +4,18 @@ import MinimalisticSubmitButton from '../MinimalisticSubmitButton/MinimalisticSu
 import MinimalisticTextInput from '../MinimalisticTextInput/MinimalisticTextInput';
 import TextNotification from '../TextNotification/TextNotification';
 import './MinimalisticAuthorizationForm.scss';
+import { useDispatch } from 'react-redux';
+import { setUser } from '../../../reducers/userReducer';
 
 function MinimalisticAuthorizationForm(props) {
+  const dispatch = useDispatch();
+
   const handleFormSubmit = async (event) => {
     event.preventDefault();
 
     if (props.isRegistrationForm === false) {
       props.login && props.password
-        ? submit_handlers.success.login(props)
+        ? dispatch(submit_handlers.success.login(props))
         : submit_handlers.error.init(props);
     } else {
       props.username &&
@@ -102,54 +106,51 @@ function MinimalisticAuthorizationForm(props) {
       },
     },
     success: {
-      login: async (props) => {
-        submit_handlers.error.clear_errors();
-
-        try {
-          const request = await fetch(`http://localhost:3000/auth/login`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json;charset=utf-8',
-              'Access-Control-Allow-Origin': '*',
-            },
-            body: JSON.stringify({
-              login: props.login,
-              password: props.password,
-            }),
-          });
-
-          const responce = await request.json();
-
-          if (responce.status === 200) {
-            submit_handlers.error.clear_errors();
-
-            props.showInputNotification(
-              <TextNotification type="success" text={`${responce.message}`} />
-            );
-
-            Cookies.set('user_data', JSON.stringify(responce.user), {
-              expires: 1,
-            });
-
-            setTimeout(() => {
-              location.reload();
-            }, 3000);
-          } else {
-            submit_handlers.error.fetch_err(responce.message);
-          }
-        } catch (error) {
+      login: (props) => {
+        return async (dispatch) => {
           submit_handlers.error.clear_errors();
 
-          let error_text = error;
+          try {
+            const request = await fetch(`http://localhost:3000/auth/login`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+                'Access-Control-Allow-Origin': '*',
+              },
+              body: JSON.stringify({
+                login: props.login,
+                password: props.password,
+              }),
+            });
 
-          if (error_text == 'TypeError: Failed to fetch') {
-            error_text = 'Ошибка сети: запрос не отправлен';
-          } else {
-            error_text = 'Неизвестная ошибка';
+            const responce = await request.json();
+
+            if (responce.status === 200) {
+              submit_handlers.error.clear_errors();
+
+              props.showInputNotification(
+                <TextNotification type="success" text={`${responce.message}`} />
+              );
+
+              dispatch(setUser(responce.data.user));
+              localStorage.setItem('token', responce.data.token);
+            } else {
+              submit_handlers.error.fetch_err(responce.message);
+            }
+          } catch (error) {
+            submit_handlers.error.clear_errors();
+
+            let error_text = error;
+
+            if (error_text == 'TypeError: Failed to fetch') {
+              error_text = 'Ошибка сети: запрос не отправлен';
+            } else {
+              error_text = 'Неизвестная ошибка';
+            }
+
+            submit_handlers.error.fetch_err(error_text);
           }
-
-          submit_handlers.error.fetch_err(error_text);
-        }
+        };
       },
       register: async (props) => {
         submit_handlers.error.clear_errors();
