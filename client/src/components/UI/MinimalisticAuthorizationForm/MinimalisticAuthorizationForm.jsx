@@ -10,40 +10,53 @@ function MinimalisticAuthorizationForm(props) {
     event.preventDefault();
 
     if (props.isRegistrationForm === false) {
-      !props.login || !props.password
-        ? submit_handlers.error.init(props)
-        : submit_handlers.success.login(props);
+      props.login && props.password
+        ? submit_handlers.success.login(props)
+        : submit_handlers.error.init(props);
     } else {
-      !props.username ||
-      !props.login ||
-      !props.password ||
-      !props.passwordCheck ||
-      props.password !== props.passwordCheck
-        ? submit_handlers.error.init(props)
-        : submit_handlers.success.register(props);
+      props.username &&
+      props.login.length >= 4 &&
+      props.login.length <= 10 &&
+      props.password.length >= 4 &&
+      props.password.length <= 10 &&
+      props.password === props.passwordCheck
+        ? submit_handlers.success.register(props)
+        : submit_handlers.error.init(props);
     }
   };
 
   const submit_handlers = {
     error: {
       init: (props) => {
-        !props.username && props.isRegistrationForm === true
+        !props.login && props.isRegistrationForm === false
+          ? submit_handlers.error.input_err(
+              props.loginInputClasses,
+              props.changeLoginInputClasses,
+              'Введите логин'
+            )
+          : !props.password && props.isRegistrationForm === false
+          ? submit_handlers.error.input_err(
+              props.passwordInputClasses,
+              props.changePasswordInputClasses,
+              'Введите пароль'
+            )
+          : !props.username && props.isRegistrationForm === true
           ? submit_handlers.error.input_err(
               props.usernameInputClasses,
               props.changeUsernameInputClasses,
               'Пожалуйста представьтесь - это важно :)'
             )
-          : !props.login
+          : props.login.length < 4 || props.login.length > 10
           ? submit_handlers.error.input_err(
               props.loginInputClasses,
               props.changeLoginInputClasses,
-              'Вы не ввели логин'
+              'Логин должен быть от 4 до 10 символов'
             )
-          : !props.password
+          : props.password.length < 4 || props.password.length > 10
           ? submit_handlers.error.input_err(
               props.passwordInputClasses,
               props.changePasswordInputClasses,
-              'Вы не ввели пароль'
+              'Пароль должен быть от 4 до 10 символов'
             )
           : props.password !== props.passwordCheck
           ? submit_handlers.error.input_err(
