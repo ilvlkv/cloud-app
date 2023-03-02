@@ -1,10 +1,12 @@
 const User = require('../models/User');
 const Role = require('../models/Role');
+const File = require('../models/File');
+const fileService = require('../services/fileService');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { secret } = require('../config');
 
-const generateAccessToken = (id, roles) => {
+const generateAccessToken = (id) => {
   const payload = {
     id,
   };
@@ -31,7 +33,7 @@ class authController {
         roles: [userRole.value],
       });
       await user.save();
-
+      await fileService.createDir(new File({ user: user._id, name: '' }));
       return res.json({
         status: 200,
         message: `Пользователь ${login} успешно зарегистрирован. Вернитесь на страницу авторизации и войдите в приложение :)`,
@@ -79,23 +81,6 @@ class authController {
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: 'Unknown login error' });
-    }
-  }
-  async getUsers(req, res) {
-    try {
-      const token = req.headers.authorization.split(' ')[1];
-
-      const decodedData = jwt.verify(token, secret);
-      const user_id = decodedData.id;
-
-      const user = await User.findOne({ user_id });
-
-      if (user) {
-        return res.status(200).json(user);
-      }
-    } catch (e) {
-      console.log(e);
-      res.status(400).json({ message: 'Find error' });
     }
   }
   async auth(req, res) {
