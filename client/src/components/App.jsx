@@ -2,63 +2,28 @@ import React, { useState, useEffect } from 'react';
 import Cookies from 'js-cookie';
 
 import Authorization from './Authorization/Authorization';
-import Logo from './UI/Logo/Logo';
+import Navbar from './UI/Navbar/Navbar';
 import HelloMessage from './UI/HelloMessage/HelloMessage';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import './App.scss';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { auth } from '../actions/user';
 
 const token = Cookies.get('token');
 
 function App(props) {
   const isAuth = useSelector((state) => state.user.isAuth);
-  // const [isAuthorized, setAuthorized] = useState(false);
-  // const [helloMessage, showHelloMessage] = useState(null);
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   if (isAuthorized) return;
-
-  //   if (token) {
-  //     async function fetchData() {
-  //       const request = await fetch(`http://localhost:3000/auth/users`, {
-  //         method: 'GET',
-  //         headers: {
-  //           Authorization: `Bearer ${token}`,
-  //         },
-  //       });
-
-  //       const responce = await request.json();
-
-  //       showHelloMessage(<HelloMessage personName={responce.username} />);
-  //     }
-
-  //     fetchData();
-
-  //     setAuthorized({ isAuthorized: true });
-  //   }
-  // }, [isAuthorized]);
-
-  // if (isAuthorized === false) {
-  //   return (
-  //     <div className="App">
-  //       <Logo />
-  //       <Authorization />
-  //     </div>
-  //   );
-  // } else {
-  //   return (
-  //     <div className="App">
-  //       <Logo />
-  //       {helloMessage}
-  //     </div>
-  //   );
-  // }
+  useEffect(() => {
+    dispatch(auth());
+  }, []);
 
   return (
     <BrowserRouter>
       <div className="App">
-        <Logo />
+        <Navbar />
         {!isAuth && (
           <Routes>
             <Route path="/authorization" element={<Authorization />}></Route>

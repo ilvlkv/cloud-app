@@ -1,0 +1,65 @@
+.navbar {
+  width: 100%;
+  height: 80px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .logo {
+    margin-left: 20px;
+  }
+
+  .auth-btn {
+    margin-right: 20px;
+  }
+}
+
+.auth-btn {
+  width: 110px;
+  height: 50px;
+
+  border: none;
+  background: none;
+  text-decoration: none;
+
+  background-color: white;
+  border-radius: 5px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+
+  color: black;
+  font-family: inherit;
+  transition: 200ms;
+
+  &:hover {
+    cursor: pointer;
+
+    box-shadow: rgba(0, 0, 0, 0.09) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px,
+      rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px,
+      rgba(0, 0, 0, 0.09) 0px 32px 16px;
+  }
+}
+
+.auth-btn_logout {
+  .auth-btn_logo {
+    background: url(/src/assets/logout.svg);
+    background-size: cover;
+  }
+}
+
+.auth-btn_logo {
+  width: 25px;
+  height: 25px;
+
+  background: url(/src/assets/login.svg);
+  background-size: cover;
+}
+
+.auth-btn_text {
+  font-family: inherit;
+  font-size: 18px;
+  font-weight: 600;
+}

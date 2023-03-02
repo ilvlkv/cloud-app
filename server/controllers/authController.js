@@ -7,7 +7,6 @@ const { secret } = require('../config');
 const generateAccessToken = (id, roles) => {
   const payload = {
     id,
-    roles,
   };
 
   return jwt.sign(payload, secret, { expiresIn: '24h' });
@@ -60,7 +59,7 @@ class authController {
         return res.status(400).json({ message: 'Введен неверный пароль' });
       }
 
-      const token = generateAccessToken(user._id, user.roles);
+      const token = generateAccessToken(user._id);
 
       return res.status(200).json({
         status: 200,
@@ -68,7 +67,13 @@ class authController {
         timestamp: Date.now(),
         data: {
           token,
-          user,
+          user: {
+            id: user._id,
+            login: user.login,
+            username: user.username,
+            diskSpace: user.diskSpace,
+            usedSpace: user.usedSpace,
+          },
         },
       });
     } catch (e) {
@@ -91,6 +96,21 @@ class authController {
     } catch (e) {
       console.log(e);
       res.status(400).json({ message: 'Find error' });
+    }
+  }
+  async auth(req, res) {
+    try {
+      const user = await User.findOne({ id: req.user.id });
+      const token = generateAccessToken(user._id);
+
+      return res.json({
+        id: user._id,
+        login: user.login,
+        diskSpace: user.diskSpace,
+        usedSpace: user.usedSpace,
+      });
+    } catch (e) {
+      console.log(e), res.send({ message: 'Ошибка сервера' });
     }
   }
 }
